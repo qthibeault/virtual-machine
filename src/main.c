@@ -1,60 +1,74 @@
-typedef enum {
-    ADD,
-    SUB,
-    MUL,
-    DIV,
-    PSH,
-    POP,
-    HLT
-} InstructionSet;
+#include <stdbool.h>
+#include <stdio.h>
+#include <string.h>
 
-/* TODO I want to implement registers. Then I can push things into registers instead of the stack*/
+#include "instructions.h"
+#include "registers.h"
 
 const int program[] = {
-    PSH, 10,
-    PSH, 4,
-    ADD,
-    POP,
+    ADD, 10, 12,
+    PRINT,
+    SUB, 10, 7,
+    PRINT,
     HLT
 };
 
-int stack[256];
-
-int instruction_pointer = 0;
-int stack_pointer = 0;
+bool running = true;
+int registers[NUM_OF_REGISTERS];
 
 int fetch()
 {
-    return program[instruction_pointer++];
+
+    return program[registers[IP]];
 }
 
 void eval(int instruction)
 {
+
     switch(instruction)
     {
-        case PSH: {
-            stack[stack_pointer++] = program[++instruction_pointer];
+        case HLT: {
+            running = false;
+            break;
         }
 
         case ADD: {
-            int a = stack[stack_pointer--];
-            int b = stack[stack_pointer--];
-
-            int result = a + b;
-            stack[++stack_pointer] = result;
+            registers[IP]++;
+            registers[A] = fetch();
+            registers[IP]++;
+            registers[B] = fetch();
+            registers[RES] = registers[A] + registers[B];
+            break;
         }
 
-        /* TODO Other instructions here */
+        case SUB: {
+            registers[IP]++;
+            registers[A] = fetch();
+            registers[IP]++;
+            registers[B] = fetch();
+            registers[RES] = registers[A] - registers[B];
+            break;
+        }
+
+        case PRINT: {
+
+            printf("Result: %d \n", registers[RES]);
+
+            break;
+        }
     }
 }
 
 int main()
 {
-    int instruction = 0;
-    while(instruction != HLT)
+    /* SETUP */
+    registers[IP] = 0;
+    registers[SP] = 0;
+
+    while(running)
     {
-        instruction = fetch();
-        eval(instruction);
+        eval(fetch());
+        registers[IP]++;
     }
 
     return 0;
