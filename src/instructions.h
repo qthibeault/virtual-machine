@@ -5,8 +5,7 @@ typedef enum {
     ADD,
     SUB,
     PRINT,
-    HLT,
-    NUM_OF_INSTRUCTIONS
+    HLT
 } InstructionSet;
 
 /* TODO move fetch and evaluate functions to this header file */
