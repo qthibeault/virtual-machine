@@ -28,6 +28,14 @@ void eval(int instruction)
     case PSH: {
       stack[stack_pointer++] = program[++instruction_pointer];
     }
+
+    case ADD: {
+      int a = stack[stack_pointer--];
+      int b = stack[stack_pointer--];
+
+      int result = a + b;
+      stack[++stack_pointer] = result;
+    }
   }
 }
 
